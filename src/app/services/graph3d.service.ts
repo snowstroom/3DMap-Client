@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 import { Engine,
   Scene,
   FreeCamera,
   Vector3,
   HemisphericLight,
-  MeshBuilder
+  MeshBuilder,
+  Mesh
   } from 'babylonjs';
 
 @Injectable()
@@ -12,7 +14,10 @@ export class Graph3dService {
   private engine: Engine;
   private scene: Scene;
   private camera: FreeCamera;
-  constructor() { }
+  private img;
+  constructor(
+    private _http: Http
+  ) { }
 
   public initSrv(cnvs: HTMLCanvasElement) {
     this.engine = new Engine(cnvs, true);
@@ -22,9 +27,8 @@ export class Graph3dService {
 
     this.camera.attachControl(cnvs, false);
     const light = new HemisphericLight('light1', new Vector3(0, 1, 0), this.scene);
-    const sphere = MeshBuilder.CreateSphere('sphere', {segments: 16, diameter: 2}, this.scene);
-    sphere.position.y = 1;
-    const ground = MeshBuilder.CreateGround('ground1', {height: 6, width: 6, subdivisions: 2}, this.scene);
+    const ground = Mesh.CreateGroundFromHeightMap('ground', 'assets/1.png',
+      100, 100, 10, 0, 10, this.scene, false);
   }
 
   public run() {
